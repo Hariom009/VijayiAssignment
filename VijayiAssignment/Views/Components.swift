@@ -73,45 +73,45 @@ struct TitleCardView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             // Poster Image
-            AsyncImage(url: URL(string: title.posterURL ?? "")) { phase in
-                switch phase {
-                case .empty:
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.gray.opacity(0.3))
-                        .frame(width: 100, height: 150)
-                        .shimmer()
-                        .overlay(
-                            ProgressView()
-                                .tint(.white)
-                        )
-                case .success(let image):
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 100, height: 150)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                case .failure(let error):
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.gray.opacity(0.2))
-                        .frame(width: 100, height: 150)
-                        .overlay(
-                            VStack(spacing: 4) {
-                                Image(systemName: "photo")
-                                    .foregroundColor(.gray)
-                                    .font(.title)
-                                Text("No Image")
-                                    .font(.caption2)
-                                    .foregroundColor(.gray)
-                            }
-                        )
-                        .onAppear {
-                            print("⚠️ Image failed for '\(title.title)': \(error.localizedDescription)")
-                            print("⚠️ URL was: '\(title.posterURL ?? "nil")'")
-                        }
-                @unknown default:
-                    EmptyView()
-                }
-            }
+//            AsyncImage(url: URL(string: title.posterURL ?? "")) { phase in
+//                switch phase {
+//                case .empty:
+//                    RoundedRectangle(cornerRadius: 12)
+//                        .fill(Color.gray.opacity(0.3))
+//                        .frame(width: 100, height: 150)
+//                        .shimmer()
+//                        .overlay(
+//                            ProgressView()
+//                                .tint(.white)
+//                        )
+//                case .success(let image):
+//                    image
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fill)
+//                        .frame(width: 100, height: 150)
+//                        .clipShape(RoundedRectangle(cornerRadius: 12))
+//                case .failure(let error):
+//                    RoundedRectangle(cornerRadius: 12)
+//                        .fill(Color.gray.opacity(0.2))
+//                        .frame(width: 100, height: 150)
+//                        .overlay(
+//                            VStack(spacing: 4) {
+//                                Image(systemName: "photo")
+//                                    .foregroundColor(.gray)
+//                                    .font(.title)
+//                                Text("No Image")
+//                                    .font(.caption2)
+//                                    .foregroundColor(.gray)
+//                            }
+//                        )
+//                        .onAppear {
+//                            print("⚠️ Image failed for '\(title.title)': \(error.localizedDescription)")
+//                            print("⚠️ URL was: '\(title.posterURL ?? "nil")'")
+//                        }
+//                @unknown default:
+//                    EmptyView()
+//                }
+//            }
             
             // Title Info
             VStack(alignment: .leading, spacing: 8) {
@@ -121,7 +121,7 @@ struct TitleCardView: View {
                     .lineLimit(2)
                 
                 if let year = title.year {
-                    Text("\(year)")
+                    Text("Year: \(year)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -138,14 +138,25 @@ struct TitleCardView: View {
                     }
                     
                     // Type Badge
-                    Text(title.type.uppercased())
-                        .font(.caption2)
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.blue.opacity(0.2))
-                        .foregroundColor(.blue)
-                        .cornerRadius(6)
+                    if title.type.uppercased() == "TV_SERIES"{
+                        Text("TV SERIES")
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.blue.opacity(0.2))
+                            .foregroundColor(.blue)
+                            .cornerRadius(6)
+                    }else{
+                        Text(title.type.uppercased())
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.blue.opacity(0.2))
+                            .foregroundColor(.blue)
+                            .cornerRadius(6)
+                    }
                 }
                 
                 Spacer()

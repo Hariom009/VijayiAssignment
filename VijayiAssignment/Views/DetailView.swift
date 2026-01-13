@@ -276,10 +276,16 @@ struct StatItem: View {
             Image(systemName: icon)
                 .font(.title2)
                 .foregroundColor(color)
+            if value == "Tv_Series"{
+                Text("TV Series")
+                    .font(.headline)
+                    .fontWeight(.semibold)
+            }else{
+                Text(value)
+                    .font(.headline)
+                    .fontWeight(.semibold)
+            }
             
-            Text(value)
-                .font(.headline)
-                .fontWeight(.semibold)
             
             Text(label)
                 .font(.caption)

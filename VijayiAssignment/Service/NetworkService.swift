@@ -9,7 +9,7 @@ class NetworkService {
     private init() {}
     
     // MARK: - Fetch Titles (Movies or TV Shows)
-    func fetchTitles(type: ContentType, limit: Int = 20) -> AnyPublisher<[Title], APIError> {
+    func fetchTitles(type: ContentType, limit: Int = 15) -> AnyPublisher<[Title], APIError> {
         let urlString = "\(baseURL)/list-titles/?apiKey=\(apiKey)&types=\(type.rawValue)&limit=\(limit)"
         
         guard let url = URL(string: urlString) else {
@@ -63,7 +63,7 @@ class NetworkService {
     }
     
     // MARK: - Fetch Both Movies and TV Shows Simultaneously using Publishers.Zip
-    func fetchMoviesAndTVShows(limit: Int = 50) -> AnyPublisher<(movies: [Title], tvShows: [Title]), APIError> {
+    func fetchMoviesAndTVShows(limit: Int = 15) -> AnyPublisher<(movies: [Title], tvShows: [Title]), APIError> {
         let moviesPublisher = fetchTitles(type: .movie, limit: limit)
         let tvShowsPublisher = fetchTitles(type: .tvShow, limit: limit)
         
