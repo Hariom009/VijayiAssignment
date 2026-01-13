@@ -30,6 +30,7 @@ class HomeViewModel: ObservableObject {
         errorMessage = nil
         showError = false
         
+        // Using limit of 15 since we fetch details for each title
         networkService.fetchMoviesAndTVShows(limit: 15)
             .sink { [weak self] completion in
                 guard let self = self else { return }

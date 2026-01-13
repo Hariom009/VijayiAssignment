@@ -69,49 +69,43 @@ struct LoadingPlaceholder: View {
 // MARK: - Title Card View
 struct TitleCardView: View {
     let title: Title
+    @State private var imageLoadingFailed = false
     
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
-            // Poster Image
-//            AsyncImage(url: URL(string: title.posterURL ?? "")) { phase in
-//                switch phase {
-//                case .empty:
-//                    RoundedRectangle(cornerRadius: 12)
-//                        .fill(Color.gray.opacity(0.3))
-//                        .frame(width: 100, height: 150)
-//                        .shimmer()
-//                        .overlay(
-//                            ProgressView()
-//                                .tint(.white)
-//                        )
-//                case .success(let image):
-//                    image
-//                        .resizable()
-//                        .aspectRatio(contentMode: .fill)
-//                        .frame(width: 100, height: 150)
-//                        .clipShape(RoundedRectangle(cornerRadius: 12))
-//                case .failure(let error):
-//                    RoundedRectangle(cornerRadius: 12)
-//                        .fill(Color.gray.opacity(0.2))
-//                        .frame(width: 100, height: 150)
-//                        .overlay(
-//                            VStack(spacing: 4) {
-//                                Image(systemName: "photo")
-//                                    .foregroundColor(.gray)
-//                                    .font(.title)
-//                                Text("No Image")
-//                                    .font(.caption2)
-//                                    .foregroundColor(.gray)
-//                            }
-//                        )
-//                        .onAppear {
-//                            print("⚠️ Image failed for '\(title.title)': \(error.localizedDescription)")
-//                            print("⚠️ URL was: '\(title.posterURL ?? "nil")'")
-//                        }
-//                @unknown default:
-//                    EmptyView()
-//                }
-//            }
+            // Poster Image with better handling
+            Group {
+                if let posterURL = title.posterURL, !posterURL.isEmpty, !imageLoadingFailed {
+                    AsyncImage(url: URL(string: posterURL)) { phase in
+                        switch phase {
+                        case .empty:
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(width: 100, height: 150)
+                                .overlay(
+                                    ProgressView()
+                                        .tint(.white)
+                                )
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 100, height: 150)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        case .failure(let error):
+                            placeholderImage
+                                .onAppear {
+                                    print("⚠️ Image failed: '\(title.title)' - \(error.localizedDescription)")
+                                    imageLoadingFailed = true
+                                }
+                        @unknown default:
+                            placeholderImage
+                        }
+                    }
+                } else {
+                    placeholderImage
+                }
+            }
             
             // Title Info
             VStack(alignment: .leading, spacing: 8) {
@@ -121,7 +115,7 @@ struct TitleCardView: View {
                     .lineLimit(2)
                 
                 if let year = title.year {
-                    Text("Year: \(year)")
+                    Text("\(year)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -138,25 +132,14 @@ struct TitleCardView: View {
                     }
                     
                     // Type Badge
-                    if title.type.uppercased() == "TV_SERIES"{
-                        Text("TV SERIES")
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.blue.opacity(0.2))
-                            .foregroundColor(.blue)
-                            .cornerRadius(6)
-                    }else{
-                        Text(title.type.uppercased())
-                            .font(.caption2)
-                            .fontWeight(.semibold)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(Color.blue.opacity(0.2))
-                            .foregroundColor(.blue)
-                            .cornerRadius(6)
-                    }
+                    Text(title.type.uppercased())
+                        .font(.caption2)
+                        .fontWeight(.semibold)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.blue.opacity(0.2))
+                        .foregroundColor(.blue)
+                        .cornerRadius(6)
                 }
                 
                 Spacer()
@@ -174,6 +157,22 @@ struct TitleCardView: View {
         .background(Color(UIColor.secondarySystemGroupedBackground))
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
+    }
+    
+    private var placeholderImage: some View {
+        RoundedRectangle(cornerRadius: 12)
+            .fill(Color.gray.opacity(0.2))
+            .frame(width: 100, height: 150)
+            .overlay(
+                VStack(spacing: 4) {
+                    Image(systemName: "photo")
+                        .foregroundColor(.gray)
+                        .font(.title2)
+                    Text("No Image")
+                        .font(.caption2)
+                        .foregroundColor(.gray)
+                }
+            )
     }
 }
 
