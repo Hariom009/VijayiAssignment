@@ -115,7 +115,7 @@ struct TitleCardView: View {
                     .lineLimit(2)
                 
                 if let year = title.year {
-                    Text("\(year)")
+                    Text("Year: \(year)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
