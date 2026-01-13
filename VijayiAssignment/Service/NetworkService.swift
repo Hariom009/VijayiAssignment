@@ -9,12 +9,14 @@ class NetworkService {
     private init() {}
     
     // MARK: - Fetch Titles (Movies or TV Shows)
-    func fetchTitles(type: ContentType, limit: Int = 50) -> AnyPublisher<[Title], APIError> {
+    func fetchTitles(type: ContentType, limit: Int = 20) -> AnyPublisher<[Title], APIError> {
         let urlString = "\(baseURL)/list-titles/?apiKey=\(apiKey)&types=\(type.rawValue)&limit=\(limit)"
         
         guard let url = URL(string: urlString) else {
             return Fail(error: APIError.invalidURL).eraseToAnyPublisher()
         }
+        
+        print("🌐 Fetching: \(urlString)")
         
         return URLSession.shared.dataTaskPublisher(for: url)
             .tryMap { data, response -> Data in
@@ -26,11 +28,28 @@ class NetworkService {
                     throw APIError.serverError(httpResponse.statusCode)
                 }
                 
+                // Debug: Print raw response
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    print("📦 Raw API Response (first 500 chars): \(String(jsonString.prefix(500)))")
+                }
+                
                 return data
             }
             .decode(type: ListTitlesResponse.self, decoder: JSONDecoder())
-            .map { $0.titles }
+            .map { response in
+                let titles = response.titles
+                print("✅ Decoded \(titles.count) titles")
+                
+                // Debug: Check first title's poster URL
+                if let firstTitle = titles.first {
+                    print("🖼️ First title: '\(firstTitle.title)'")
+                    print("🖼️ Poster URL: '\(firstTitle.posterURL ?? "NIL")'")
+                }
+                
+                return titles
+            }
             .mapError { error in
+                print("❌ Error: \(error)")
                 if error is DecodingError {
                     return APIError.decodingError
                 } else if let apiError = error as? APIError {

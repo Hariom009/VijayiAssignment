@@ -80,21 +80,34 @@ struct TitleCardView: View {
                         .fill(Color.gray.opacity(0.3))
                         .frame(width: 100, height: 150)
                         .shimmer()
+                        .overlay(
+                            ProgressView()
+                                .tint(.white)
+                        )
                 case .success(let image):
                     image
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 100, height: 150)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
-                case .failure:
+                case .failure(let error):
                     RoundedRectangle(cornerRadius: 12)
                         .fill(Color.gray.opacity(0.2))
                         .frame(width: 100, height: 150)
                         .overlay(
-                            Image(systemName: "photo")
-                                .foregroundColor(.gray)
-                                .font(.largeTitle)
+                            VStack(spacing: 4) {
+                                Image(systemName: "photo")
+                                    .foregroundColor(.gray)
+                                    .font(.title)
+                                Text("No Image")
+                                    .font(.caption2)
+                                    .foregroundColor(.gray)
+                            }
                         )
+                        .onAppear {
+                            print("⚠️ Image failed for '\(title.title)': \(error.localizedDescription)")
+                            print("⚠️ URL was: '\(title.posterURL ?? "nil")'")
+                        }
                 @unknown default:
                     EmptyView()
                 }

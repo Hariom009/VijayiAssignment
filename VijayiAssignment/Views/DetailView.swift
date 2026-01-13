@@ -78,32 +78,35 @@ struct DetailsView: View {
         ZStack(alignment: .bottom) {
             // Backdrop Image
             if let backdropURL = details.backdrop {
-                AsyncImage(url: URL(string: backdropURL)) { phase in
-                    switch phase {
-                    case .empty:
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.3))
-                            .frame(height: 250)
-                            .shimmer()
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(height: 250)
-                            .clipped()
-                    case .failure:
-                        Rectangle()
-                            .fill(Color.gray.opacity(0.2))
-                            .frame(height: 250)
-                            .overlay(
-                                Image(systemName: "photo")
-                                    .foregroundColor(.gray)
-                                    .font(.largeTitle)
-                            )
-                    @unknown default:
-                        EmptyView()
+                GeometryReader { geo in
+                    AsyncImage(url: URL(string: backdropURL)) { phase in
+                        switch phase {
+                        case .empty:
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.3))
+                                .frame(height: 180)
+                                .shimmer()
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height: 180)
+                                .clipped()
+                        case .failure:
+                            Rectangle()
+                                .fill(Color.gray.opacity(0.2))
+                                .frame(height: 180)
+                                .overlay(
+                                    Image(systemName: "photo")
+                                        .foregroundColor(.gray)
+                                        .font(.largeTitle)
+                                )
+                        @unknown default:
+                            EmptyView()
+                        }
                     }
                 }
+                .frame(height: 200)
             } else {
                 Rectangle()
                     .fill(Color.gray.opacity(0.2))
