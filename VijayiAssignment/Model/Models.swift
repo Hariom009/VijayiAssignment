@@ -20,7 +20,7 @@ struct ListTitlesResponse: Codable {
     let titles: [Title]
 }
 
-// MARK: - Title Model
+// MARK: -  Title Model
 struct Title: Codable, Identifiable {
     let id: Int
     let title: String
